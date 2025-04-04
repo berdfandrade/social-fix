@@ -11,13 +11,12 @@ def user_data():
     return USER
 
 
-@TestName("UserService")
+@TestName("👤 UserService")
 class TestUserService:
 
     @it("Should return user")
     def test_create_user(self, db: Session, user_data):
-
-        user_data = USER
+        
         new_user = UserService.create_user(db, user_data)
 
         assert new_user is not None

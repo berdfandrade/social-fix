@@ -11,9 +11,7 @@ from app.security.hashing import hash_password
 class VolunteerService:
 
     @staticmethod
-    def become_volunteer(
-        db: Session, user_id: UUID, volunteer, volunteer_data: VolunteerCreate
-    ):
+    def become_volunteer(db: Session, user_id: UUID):
         """Transforma o usuário em vonluntário"""
 
         # Verifica se o usuário existe
@@ -30,7 +28,6 @@ class VolunteerService:
         volunteer = Volunteer(
             id=uuid.uuid4(),
             user_id=user_id,
-            phone=volunteer_data.phone,
         )
 
         user.is_volunteer = True

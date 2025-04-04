@@ -11,7 +11,7 @@ class AuthMiddleWare(BaseHTTPMiddleware):
         # Verifica se a rota requer autenticação (pule rotas públicas como login)
         # Devemos pular as rotas públicas
         print(f"Interceptando requisição para: {request.url.path}")
-        if request.url.path in ["/token", "/docs", "/openapi.json", "/"]:
+        if request.url.path in ["/token", "/docs", "/openapi.json", "/", "/redoc"]:
             return await call_next(request)
 
         # Obtém o token do cabeçalho Authorization

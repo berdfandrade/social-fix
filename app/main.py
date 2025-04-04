@@ -6,6 +6,7 @@ from fastapi.responses import HTMLResponse
 from starlette.requests import Request
 from app.routes.user import router as user_routes
 from app.routes.login import router as login_routes
+from app.routes.volunteer import router as volunteer_routes
 from app.middlewares.auth import AuthMiddleWare
 
 # Cria uma instância do FastAPI
@@ -14,6 +15,7 @@ app = FastAPI()
 # Rotas de usuário
 app.include_router(login_routes)
 app.include_router(user_routes)
+app.include_router(volunteer_routes)
 app.add_middleware(AuthMiddleWare)
 
 # Criação de uma instância do Jinja2Templates

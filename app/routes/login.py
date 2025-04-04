@@ -6,6 +6,7 @@ from app.config.database import Connection
 
 router = APIRouter(prefix="/auth", tags=["🔒 Auth"])
 
+
 @router.post("/login", response_model=LoginResponse)
 def login(login_data: LoginRequest, db: Session = Depends(Connection)):
     """

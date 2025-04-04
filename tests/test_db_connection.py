@@ -1,5 +1,6 @@
 import os
 import pytest
+from tests.tools.wrapper import it, TestName
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
@@ -16,13 +17,14 @@ engine = create_engine(DATABASE_URL)
 # Criar uma sessão
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def db_session():
     # Cria uma sessão para testar a conexão
     session = SessionLocal()
     yield session
     session.close()
-
+    
+@it("🔗 Should return the connection with DB")
 def test_connection(db_session):
     try:
         # Tenta realizar uma consulta simples para testar a conexão
