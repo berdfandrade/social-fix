@@ -16,7 +16,6 @@ class AuthMiddleWare(BaseHTTPMiddleware):
 
         # Obtém o token do cabeçalho Authorization
         auth_header = request.headers.get("Authorization")
-        print("Cabeçalho Authorization:", auth_header)  # 🔍 Debug
         if not auth_header or not auth_header.startswith("Bearer "):
             return JSONResponse(
                 status_code=status.HTTP_401_UNAUTHORIZED,
