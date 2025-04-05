@@ -1,75 +1,64 @@
 import pytest
 from fastapi import FastAPI, HTTPException, status, Request
+from tests.tools.wrapper import it, TestName
 from fastapi.testclient import TestClient
 from datetime import timedelta
 from app.middlewares.auth import AuthMiddleWare
 from app.services.auth import AuthService
-
-# Configuração do FastAPI com middleware
-app = FastAPI()
-app.add_middleware(AuthMiddleWare)
+import json
 
 
-# Criando uma rota protegida para testar
-@app.get("/protected")
-def protected_route(request: Request):
-    return {"message": "Access granted", "user": request.state.user}
+@TestName("🔐 AuthMiddleware")
+class TestAuthMiddleware:
+    def setup_class(self):
 
+        self.app = FastAPI()
+        self.app.add_middleware(AuthMiddleWare)
 
-@pytest.fixture
-def client():
-    return TestClient(app)
+        @self.app.get("/protected")
+        def protected_route(request: Request):
+            return {"message": "Access granted", "user": request.state.user}
 
+        self.client = TestClient(self.app)
 
-@pytest.fixture
-def invalid_credentials():
-    """Retorna a exceção esperada para tokens inválidos"""
-    return HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Invalid or expired token",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
+    def get_valid_token(self):
 
+        user_data = {"sub": "1"}
+        return AuthService.create_access_token(
+            data=user_data, expires_delta=timedelta(minutes=5)
+        )
 
-@pytest.fixture
-def valid_token():
-    """Gera um token JWT válido para os testes"""
-    user_data = {"sub": "1"}  # ID do usuário
-    return AuthService.create_access_token(
-        data=user_data, expires_delta=timedelta(minutes=5)
-    )
+    @it("Should try to decode an invalid token")
+    def test_decode_invalid_token(self):
+        user = AuthService.decode_token("invalid_token")
+        assert user is None
 
+    @it("Public routes should be access without auth")
+    def test_middleware_allows_public_routes(self):
+        """Rotas públicas devem ser acessíveis sem autenticação"""
+        response = self.client.get("/docs")
+        assert response.status_code == 200
 
-def test_decode_invalid_token():
-    user = AuthService.decode_token("invalid_token")
-    assert user is None
+    @it("Should block request without token")
+    def test_middleware_blocks_request_without_token(self):
+        """"""
+        response = self.client.get("/protected")
+        assert response.status_code == 401
+        assert response.json()["detail"] == "Missing or invalid token"
 
+    @it("Should return 401 for a invalid token")
+    def test_middleware_blocks_invalid_token(self):
+        """Token inválido deve retornar erro 401"""
+        headers = {"Authorization": "Bearer invalid_token"}
+        response = self.client.get("/protected", headers=headers)
+        assert response.status_code == 401
+        assert response.json()["detail"] == "Invalid or expired token"
 
-def test_middleware_allows_public_routes(client):
-    """Testa se rotas públicas são acessíveis sem autenticação"""
-    response = client.get("/docs")  # "/docs" deve ser acessível sem token
-    assert response.status_code == 200
-
-
-def test_middleware_blocks_request_without_token(client):
-    """Testa se requisições sem token são bloqueadas"""
-    response = client.get("/protected")  # Endpoint protegido sem token
-    assert response.status_code == 401
-    assert response.json()["detail"] == "Missing or invalid token"
-
-
-def test_middleware_blocks_invalid_token(client):
-    """Testa se um token inválido retorna erro"""
-    headers = {"Authorization": "Bearer invalid_token"}
-    response = client.get("/protected", headers=headers)
-    assert response.status_code == 401
-    assert response.json()["detail"] == "Invalid or expired token"
-
-
-def test_middleware_allows_valid_token(client, valid_token):
-    """Testa se um token válido permite acessar a rota"""
-    headers = {"Authorization": f"Bearer {valid_token}"}
-    response = client.get("/protected", headers=headers)
-    print("Token Inválido:", response.status_code, response.json())  # 🔍 Debug
-    assert response.status_code == 200
-    assert response.json()["message"] == "Access granted"
+    @it("Should allows route with valid token")
+    def test_middleware_allows_valid_token(self):
+        """Token válido deve permitir acesso"""
+        token = self.get_valid_token()
+        headers = {"Authorization": f"Bearer {token}"}
+        response = self.client.get("/protected", headers=headers)
+        assert response.status_code == 200
+        assert response.json()["message"] == "Access granted"

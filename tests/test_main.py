@@ -1,10 +1,11 @@
+from tests.tools.wrapper import it, TestName
 from fastapi.testclient import TestClient
 from app.main import app
 
 # Criando o cliente de testes
 client = TestClient(app)
 
-
+@TestName("📄 Should Load Main Page")
 def test_login_page_load():
     # Fazendo uma requisição GET para a rota "/"
     response = client.get("/")
