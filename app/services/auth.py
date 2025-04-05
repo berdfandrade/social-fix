@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.models.user import User
 from app.security.hashing import verify_password
 from app.schemas.auth import LoginRequest, LoginResponse
+from starlette.responses import JSONResponse
 
 
 class AuthService:
@@ -21,9 +22,9 @@ class AuthService:
         user = db.query(User).filter(User.email == login_data.email).first()
 
         if not user or not verify_password(login_data.password, user.hashed_password):
-            raise HTTPException(
+            return JSONResponse(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid credentials",
+                content="Invalid credentials",
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
@@ -34,15 +35,13 @@ class AuthService:
     @staticmethod
     def decode_user(token: str = Depends(AUTH_SCHEME)):
         """Verifica e retorna o usuário autenticado a partir do token"""
-        credentials_exception = HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
         payload = AuthService.decode_token(token)
         if not payload:
-            raise credentials_exception
+            return JSONResponse(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                content="Missing or invalid token",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
 
         return payload
 
