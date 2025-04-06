@@ -10,7 +10,7 @@ class AuthMiddleWare(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         # Verifica se a rota requer autenticação (pule rotas públicas como login)
         # Devemos pular as rotas públicas
-        print(f"Interceptando requisição para: {request.url.path}")
+
         if request.url.path in ["/token", "/docs", "/openapi.json", "/", "/redoc"]:
             return await call_next(request)
 
