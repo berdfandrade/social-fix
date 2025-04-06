@@ -5,12 +5,13 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from starlette.requests import Request
 from app.routes.user import router as user_routes
+from app.config.fastapi import FASTAPI_CONFIGS
 from app.routes.login import router as login_routes
 from app.routes.volunteer import router as volunteer_routes
 from app.middlewares.auth import AuthMiddleWare
 
 # Cria uma instância do FastAPI
-app = FastAPI()
+app = FastAPI(**FASTAPI_CONFIGS)
 
 # Rotas de usuário
 app.include_router(login_routes)
@@ -30,6 +31,5 @@ sys.path.append(str(ROOT_DIR))
 # Rota da página de login
 @app.get("/", response_class=HTMLResponse, tags=["✅ Main"])
 async def read_root(request: Request):
-    return templates.TemplateResponse(
-        {"request": request, "name": "FastAPI"}, "index.html"
-    )
+    """Página de login"""
+    return templates.TemplateResponse({"request": request, "name": "FastAPI"}, "index.html")
