@@ -12,4 +12,4 @@ def login(login_data: LoginRequest, db: Session = Depends(Connection)):
     """
     Endpoint para autenticação do usuários. Retorna um token válido
     """
-    return AuthService.autheticate_user(db, login_data)
+    return AuthService.authenticate_user(db, login_data)
