@@ -3,9 +3,6 @@ from uuid import UUID
 from sqlalchemy.orm import Session
 from app.models.user import User
 from app.models.volunteer import Volunteer
-from app.schemas.user import UserCreate
-from app.schemas.volunteer import VolunteerCreate
-from app.security.hashing import hash_password
 
 
 class VolunteerService:
