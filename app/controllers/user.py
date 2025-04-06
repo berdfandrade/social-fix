@@ -1,4 +1,5 @@
 from fastapi import Depends, HTTPException
+from pydantic.v1 import EmailStr
 from sqlalchemy.orm import Session
 from app.services.user import UserService
 from app.schemas.user import UserCreate, UserResponse
@@ -39,6 +40,7 @@ class UserController:
         email: str, db: Session = Depends(Connection)
     ) -> UserResponse:
         """Busca um usuário pelo e-mail"""
+        email = EmailStr(email)
         user = UserService.get_user_by_email(db, email)
         if not user:
             raise HTTPException(status_code=404, detail="User not found")

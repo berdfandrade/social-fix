@@ -6,7 +6,7 @@ load_dotenv()  # Carrega as variáveis do .env
 IS_DEV_MODE = os.getenv("DEVELOPMENT") == "1"
 
 if IS_DEV_MODE:
-    FASTAPI_CONFIGS = {
+    AppConfig = {
         "title": "Social Fix API",
         "description": "API para criar eventos de caridade e conectar voluntários.",
         "version": "1.0.0",
@@ -15,7 +15,7 @@ if IS_DEV_MODE:
         "redoc_url": "/redoc"
     }
 else:
-    FASTAPI_CONFIGS = {
+    AppConfig = {
         "title": "Social Fix API",
         "description": "API para criar eventos de caridade e conectar voluntários.",
         "version": "1.0.0",

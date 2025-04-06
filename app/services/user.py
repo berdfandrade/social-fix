@@ -1,3 +1,4 @@
+from pydantic import EmailStr
 from sqlalchemy.orm import Session
 from app.models.user import User
 from app.schemas.user import UserCreate
@@ -16,7 +17,7 @@ class UserService:
         return db.query(User).filter(User.username == username).first()
 
     @staticmethod
-    def get_user_by_email(db: Session, email: str):
+    def get_user_by_email(db: Session, email: EmailStr):
         """Busca um usuário pelo e-mail"""
         return db.query(User).filter(User.email == email).first()
 

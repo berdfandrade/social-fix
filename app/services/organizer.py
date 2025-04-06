@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 class OrganizerService:
     @staticmethod
-    def become_organizer(db : Session, user_id : str):
+    def become_organizer(db : Session, user_id : uuid.UUID):
         """Transforma o usuário em um organizador"""
 
         # Verifica se o usuário existe
