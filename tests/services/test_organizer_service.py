@@ -14,13 +14,13 @@ from tests.tools.wrapper import it, TestName
 def user_data():
     return USER
 
-@TestName("OrganizerService")
-class OrganizerService:
+@TestName("🧠 OrganizerService")
+class TestOrganizerService:
 
     @it("User should become organizer")
     def test_become_organizer_sucess(self, db : Session, user_data):
 
         user = UserService.create_user(db, user_data)
-        VolunteerService.become_volunteer(db, user.id)
+        OrganizerService.become_organizer(db, user.id)
 
         assert user.is_organizer == True
