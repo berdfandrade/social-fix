@@ -10,6 +10,7 @@ from app.routes.login import router as login_routes
 from app.routes.volunteer import router as volunteer_routes
 from app.routes.organizer import router as organizer_routes
 from app.middlewares.auth import AuthMiddleWare
+from app.docs.config import docs, RouteDescription
 
 # Cria uma instância do FastAPI
 app = FastAPI(**AppConfig)
@@ -32,5 +33,6 @@ sys.path.append(str(ROOT_DIR))
 
 # Rota da página de login
 @app.get("/", response_class=HTMLResponse, tags=["✅ Main"])
+@docs(RouteDescription["pagina_inicial"])
 async def read_root(request: Request):
     return templates.TemplateResponse({"request": request, "name": "FastAPI"}, "index.html")
