@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 from sqlalchemy import Column, String, DateTime, Boolean
 from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, ARRAY
 from app.models.volunteer import Volunteer
 from app.models.organizer import Organizer
 from app.config.database import Base
@@ -44,5 +44,7 @@ class User(Base):
     # Relationships
     is_volunteer = Column(Boolean, default=False)
     is_organizer = Column(Boolean, default=False)
-    volunteer = relationship("Volunteer", uselist=False, back_populates="user")
-    organizer = relationship("Organizer", uselist=False, back_populates="user")
+
+    # List of related events IDs
+    volunteer_event_ids = Column(ARRAY(UUID(as_uuid=True)))
+    organizer_event_ids = Column(ARRAY(UUID(as_uuid=True)), default=[])

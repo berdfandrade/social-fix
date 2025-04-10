@@ -15,7 +15,8 @@ class TestHashPassword:
         assert hashed_password != password
         assert hashed_password.startswith("$2b$")
 
-    @it("Should be a valid hash")
+    # @it("Should be a valid hash")
+    """Should be a valid hash"""
     def test_verify_password(self):
 
         password = "minha_senha_segura"
